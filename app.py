@@ -28,7 +28,7 @@ app.layout = html.Div(children=[
             html.Div([
                 html.H6('Petal Length'),
                 dcc.Slider(
-                    id='petal-length',
+                    id='length',
                     min=1,
                     max=8,
                     step=0.1,
@@ -40,7 +40,7 @@ app.layout = html.Div(children=[
             html.Div([
                 html.H6('Petal Width'),
                 dcc.Slider(
-                    id='petal-width',
+                    id='width',
                     min=0.1,
                     max=3,
                     step=0.1,
@@ -54,13 +54,13 @@ app.layout = html.Div(children=[
         html.Div([
             html.H6(id='message'),
             dcc.Graph(
-                id='figure-1'
+                id='myfig'
             ),
 
         ], className='twelve columns'),
 
     html.Br(),
-    html.A('Code on Github', href='https://github.com/austinlasseter/knn_iris_plotly'),
+    html.A('Code on Github', href='https://github.com/ihdorfman/knn_iris_plotly'),
     ])
 ])
 
@@ -69,20 +69,20 @@ app.layout = html.Div(children=[
 
 # Message callback
 @app.callback(Output('message', 'children'),
-              [Input('petal-length', 'value'),
-               Input('petal-width', 'value')])
+              [Input('length', 'value'),
+               Input('width', 'value')])
 def radio_results(val0, val1):
     new_observation0=[[val0, val1]]
     prediction=model.predict(new_observation0)
     specieslist=['setosa/red', 'versicolor/blue', 'virginica/yellow']
     species =prediction[0]
-    return f'The predicted species is {specieslist[species]}'
+    return f'Your flower is most likely a {specieslist[species]}'
 
 
 # Figure callback
-@app.callback(Output('figure-1', 'figure'),
-              [Input('petal-length', 'value'),
-               Input('petal-width', 'value')])
+@app.callback(Output('myfig', 'figure'),
+              [Input('length', 'value'),
+               Input('width', 'value')])
 def display_figure(val0, val1):
     ########## Make a prediction & find its neighbors
     new_observation0=[[val0, val1]]
@@ -90,7 +90,7 @@ def display_figure(val0, val1):
     neighbors=list(model.kneighbors(new_observation0)[1][0])
     df_neighbors=train.iloc[neighbors, :]
 
-    brights = ['red', 'blue', 'yellow', 'white'] # https://www.canva.com/learn/100-color-combinations/
+    brights = ['#B80051', '#5976B2', '#CCAC00', '#FFF8F2'] # https://www.canva.com/learn/100-color-combinations/
 
     trace1 = go.Scatter(
         x = train['pl'],
@@ -118,7 +118,7 @@ def display_figure(val0, val1):
         mode = 'markers',
         marker=dict(
             size=12,
-            color='lightgreen',
+            color='#00CCCC',
             symbol = 'pentagon',
             line=dict(
                 color='darkblue',
